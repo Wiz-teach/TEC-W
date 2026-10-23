@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Present Simple Quiz (is/am/are)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .question-font { font-family: 'Comic Neue', cursive; }
+        
+        /* Custom scrollbar for the repository modal */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="bg-blue-50 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-blue-100 shadow-sm py-4 sticky top-0 z-10">
+        <div class="max-w-3xl mx-auto px-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-blue-600 flex items-center gap-2">
+                ✏️ Present Simple: is / am / are
+            </h1>
+            <div id="score-tracker" class="text-sm font-semibold bg-blue-100 text-blue-800 px-3 py-1 rounded-full">
+                Score: 0
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Quiz Area -->
+    <main class="flex-grow max-w-3xl w-full mx-auto p-4 sm:p-6 flex flex-col justify-center">
+        
+        <div class="bg-white rounded-3xl shadow-lg border border-blue-100 overflow-hidden">
+            
+            <!-- Question Display Area -->
+            <div class="p-8 sm:p-12 text-center bg-white">
+                <h2 id="question-text" class="question-font text-3xl sm:text-4xl font-bold text-slate-800 leading-tight mb-8">
+                    <!-- Question injected here -->
+                </h2>
+
+                <!-- Options -->
+                <div id="options-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-lg mx-auto text-left">
+                    <!-- Options injected here -->
+                </div>
+            </div>
+
+            <!-- Feedback Area (Hidden by default) -->
+            <div id="feedback-area" class="hidden border-t border-slate-100 p-6 sm:p-8 bg-slate-50 transition-all duration-300">
+                <div class="flex items-start gap-4">
+                    <div id="feedback-icon" class="text-3xl mt-1"></div>
+                    <div class="flex-1">
+                        <h3 id="feedback-title" class="text-lg font-bold mb-1"></h3>
+                        <p id="feedback-tip" class="text-slate-600 font-medium"></p>
+                    </div>
+                    <button onclick="loadRandomQuestion()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-xl shadow-md transition-colors whitespace-nowrap">
+                        Next →
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 mt-auto">
+        <div class="max-w-3xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-slate-500">
+            <p>Practice makes perfect!</p>
+            <button onclick="toggleRepository()" class="flex items-center gap-2 text-blue-600 hover:text-blue-800 font-semibold bg-blue-50 px-4 py-2 rounded-lg transition">
+                📚 View Question Repository (100)
+            </button>
+        </div>
+    </footer>
+
+    <!-- Repository Modal (Hidden by default) -->
+    <div id="repository-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[85vh] flex flex-col overflow-hidden">
+            <div class="p-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+                <h2 class="text-xl font-bold text-slate-800">100 Question Repository</h2>
+                <button onclick="toggleRepository()" class="text-slate-400 hover:text-rose-500 transition text-2xl leading-none">&times;</button>
+            </div>
+            <div class="p-4 overflow-y-auto flex-grow bg-white">
+                <div id="repository-list" class="space-y-3">
+                    <!-- Repository items injected here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 100 Question Repository focusing exclusively on Present Simple (is/am/are)
+        const questionsRepo = [
+            // 'I' - am (1-15)
+            { q: "I ___ a student.", options: ["A) is", "B) am", "C) are", "D) be"], correct: 1, tip: "Tip: Use 'am' with the subject pronoun 'I'." },
+            { q: "I ___ very happy today.", options: ["A) am", "B) is", "C) are", "D) being"], correct: 0, tip: "Tip: Use 'am' with the subject pronoun 'I'." },
+            { q: "I ___ not ready yet.", options: ["A) are", "B) is", "C) am", "D) be"], correct: 2, tip: "Tip: Use 'am' with the subject pronoun 'I'." },
+            { q: "I ___ from Thailand.", options: ["A) am", "B) is", "C) are", "D) does"], correct: 0, tip: "Tip: Use 'am' with 'I' to talk about origins." },
+            { q: "I ___ 25 years old.", options: ["A) is", "B) have", "C) am", "D) are"], correct: 2, tip: "Tip: Use 'am' (verb to be) to state your age in English." },
+            { q: "I ___ hungry right now.", options: ["A) are", "B) am", "C) is", "D) be"], correct: 1, tip: "Tip: Use 'am' with the subject pronoun 'I'." },
+            { q: "I ___ tired after work.", options: ["A) am", "B) is", "C) are", "D) doing"], correct: 0, tip: "Tip: Use 'am' with the subject pronoun 'I'." },
+            { q: "I ___ a good swimmer.", options: ["A) are", "B) is", "C) am", "D) be"], correct: 2, tip: "Tip: Use 'am' with the subject pronoun 'I'." },
+            { q: "I ___ not sure about that.", options: ["A) is", "B) are", "C) am", "D) be"], correct: 2, tip: "Tip: Use 'am' with the subject pronoun 'I'." },
+            { q: "I ___ cold. Can you close the window?", options: ["A) is", "B) am", "C) are", "D) does"], correct: 1, tip: "Tip: Use 'am' with 'I' to express how you feel." },
+            { q: "I ___ interested in history.", options: ["A) am", "B) is", "C) are", "D) be"], correct: 0, tip: "Tip: Use 'am' with the subject pronoun 'I'." },
+            { q: "I ___ the tallest in my family.", options: ["A) is", "B) are", "C) am", "D) be"], correct: 2, tip: "Tip: Use 'am' with the subject pronoun 'I'." },
+            { q: "I ___ sorry for being late.", options: ["A) am", "B) is", "C) are", "D) does"], correct: 0, tip: "Tip: Use 'am' with the subject pronoun 'I'." },
+            { q: "I ___ afraid of spiders.", options: ["A) are", "B) is", "C) am", "D) be"], correct: 2, tip: "Tip: Use 'am' with the subject pronoun 'I'." },
+            { q: "I ___ busy at the moment.", options: ["A) is", "B) are", "C) be", "D) am"], correct: 3, tip: "Tip: Use 'am' with the subject pronoun 'I'." },
+
+            // 'He/She/It' - is (16-45)
+            { q: "He ___ my best friend.", options: ["A) am", "B) is", "C) are", "D) be"], correct: 1, tip: "Tip: Use 'is' with the singular subject 'He'." },
+            { q: "She ___ a great teacher.", options: ["A) is", "B) am", "C) are", "D) be"], correct: 0, tip: "Tip: Use 'is' with the singular subject 'She'." },
+            { q: "It ___ a beautiful day.", options: ["A) am", "B) are", "C) is", "D) be"], correct: 2, tip: "Tip: Use 'is' with the singular subject 'It'." },
+            { q: "He ___ very smart.", options: ["A) is", "B) am", "C) are", "D) does"], correct: 0, tip: "Tip: Use 'is' with the singular subject 'He'." },
+            { q: "She ___ not at home right now.", options: ["A) am", "B) are", "C) is", "D) be"], correct: 2, tip: "Tip: Use 'is' with the singular subject 'She'." },
+            { q: "It ___ raining outside.", options: ["A) are", "B) is", "C) am", "D) be"], correct: 1, tip: "Tip: Use 'is' with the singular subject 'It'." },
+            { q: "He ___ an engineer.", options: ["A) is", "B) am", "C) are", "D) be"], correct: 0, tip: "Tip: Use 'is' with the singular subject 'He'." },
+            { q: "She ___ my sister.", options: ["A) am", "B) is", "C) are", "D) be"], correct: 1, tip: "Tip: Use 'is' with the singular subject 'She'." },
+            { q: "It ___ a small dog.", options: ["A) is", "B) are", "C) am", "D) be"], correct: 0, tip: "Tip: Use 'is' with the singular subject 'It'." },
+            { q: "He ___ very tall.", options: ["A) are", "B) am", "C) is", "D) be"], correct: 2, tip: "Tip: Use 'is' with the singular subject 'He'." },
+            { q: "She ___ interested in art.", options: ["A) am", "B) are", "C) is", "D) be"], correct: 2, tip: "Tip: Use 'is' with the singular subject 'She'." },
+            { q: "It ___ a very old house.", options: ["A) is", "B) am", "C) are", "D) be"], correct: 0, tip: "Tip: Use 'is' with the singular subject 'It'." },
+            { q: "He ___ always on time.", options: ["A) are", "B) is", "C) am", "D) be"], correct: 1, tip: "Tip: Use 'is' with the singular subject 'He'." },
+            { q: "She ___ good at math.", options: ["A) is", "B) am", "C) are", "D) does"], correct: 0, tip: "Tip: Use 'is' with the singular subject 'She'." },
+            { q: "It ___ very hot in here.", options: ["A) am", "B) are", "C) is", "D) be"], correct: 2, tip: "Tip: Use 'is' with the singular subject 'It'." },
+            { q: "He ___ not ready to leave.", options: ["A) is", "B) am", "C) are", "D) be"], correct: 0, tip: "Tip: Use 'is' with the singular subject 'He'." },
+            { q: "She ___ a doctor.", options: ["A) am", "B) are", "C) is", "D) be"], correct: 2, tip: "Tip: Use 'is' with the singular subject 'She'." },
+            { q: "It ___ my turn.", options: ["A) is", "B) am", "C) are", "D) be"], correct: 0, tip: "Tip: Use 'is' with the singular subject 'It'." },
+            { q: "He ___ sick today.", options: ["A) are", "B) is", "C) am", "D) be"], correct: 1, tip: "Tip: Use 'is' with the singular subject 'He'." },
+            { q: "She ___ very kind.", options: ["A) am", "B) are", "C) be", "D) is"], correct: 3, tip: "Tip: Use 'is' with the singular subject 'She'." },
+            { q: "It ___ an easy question.", options: ["A) is", "B) am", "C) are", "D) be"], correct: 0, tip: "Tip: Use 'is' with the singular subject 'It'." },
+            { q: "He ___ at the office.", options: ["A) am", "B) are", "C) is", "D) be"], correct: 2, tip: "Tip: Use 'is' with the singular subject 'He'." },
+            { q: "She ___ 30 years old.", options: ["A) is", "B) am", "C) are", "D) have"], correct: 0, tip: "Tip: Use 'is' to state age for the subject 'She'." },
+            { q: "It ___ time to go.", options: ["A) are", "B) is", "C) am", "D) be"], correct: 1, tip: "Tip: Use 'is' with the singular subject 'It'." },
+            { q: "He ___ a funny person.", options: ["A) is", "B) am", "C) are", "D) be"], correct: 0, tip: "Tip: Use 'is' with the singular subject 'He'." },
+            { q: "She ___ from Canada.", options: ["A) am", "B) is", "C) are", "D) be"], correct: 1, tip: "Tip: Use 'is' with the singular subject 'She'." },
+            { q: "It ___ difficult to explain.", options: ["A) are", "B) am", "C) is", "D) be"], correct: 2, tip: "Tip: Use 'is' with the singular subject 'It'." },
+            { q: "He ___ the new manager.", options: ["A) is", "B) am", "C) are", "D) be"], correct: 0, tip: "Tip: Use 'is' with the singular subject 'He'." },
+            { q: "She ___ asleep.", options: ["A) am", "B) are", "C) is", "D) be"], correct: 2, tip: "Tip: Use 'is' with the singular subject 'She'." },
+            { q: "It ___ a secret.", options: ["A) is", "B) am", "C) are", "D) be"], correct: 0, tip: "Tip: Use 'is' with the singular subject 'It'." },
+
+            // 'We/You/They' - are (46-75)
+            { q: "We ___ happy to see you.", options: ["A) is", "B) am", "C) are", "D) be"], correct: 2, tip: "Tip: Use 'are' with the plural subject pronoun 'We'." },
+            { q: "You ___ very welcome.", options: ["A) are", "B) is", "C) am", "D) be"], correct: 0, tip: "Tip: Use 'are' with the pronoun 'You'." },
+            { q: "They ___ playing in the garden.", options: ["A) is", "B) am", "C) are", "D) be"], correct: 2, tip: "Tip: Use 'are' with the plural subject pronoun 'They'." },
+            { q: "We ___ students.", options: ["A) am", "B) are", "C) is", "D) be"], correct: 1, tip: "Tip: Use 'are' with the plural subject pronoun 'We'." },
+            { q: "You ___ late again.", options: ["A) is", "B) am", "C) are", "D) be"], correct: 2, tip: "Tip: Use 'are' with the pronoun 'You'." },
+            { q: "They ___ my parents.", options: ["A) are", "B) is", "C) am", "D) be"], correct: 0, tip: "Tip: Use 'are' with the plural subject pronoun 'They'." },
+            { q: "We ___ not sure about the rules.", options: ["A) is", "B) am", "C) are", "D) be"], correct: 2, tip: "Tip: Use 'are' with the plural subject pronoun 'We'." },
+            { q: "You ___ doing a great job.", options: ["A) am", "B) are", "C) is", "D) be"], correct: 1, tip: "Tip: Use 'are' with the pronoun 'You'." },
+            { q: "They ___ very friendly.", options: ["A) is", "B) am", "C) are", "D) be"], correct: 2, tip: "Tip: Use 'are' with the plural subject pronoun 'They'." },
+            { q: "We ___ ready for the test.", options: ["A) are", "B) is", "C) am", "D) be"], correct: 0, tip: "Tip: Use 'are' with the plural subject pronoun 'We'." },
+            { q: "You ___ the best player.", options: ["A) is", "B) are", "C) am", "D) be"], correct: 1, tip: "Tip: Use 'are' with the pronoun 'You'." },
+            { q: "They ___ not at the party.", options: ["A) am", "B) is", "C) are", "D) be"], correct: 2, tip: "Tip: Use 'are' with the plural subject pronoun 'They'." },
+            { q: "We ___ from Italy.", options: ["A) are", "B) is", "C) am", "D) be"], correct: 0, tip: "Tip: Use 'are' with the plural subject pronoun 'We'." },
+            { q: "You ___ always helpful.", options: ["A) is", "B) am", "C) are", "D) be"], correct: 2, tip: "Tip: Use 'are' with the pronoun 'You'." },
+            { q: "They ___ busy this weekend.", options: ["A) are", "B) is", "C) am", "D) be"], correct: 0, tip: "Tip: Use 'are' with the plural subject pronoun 'They'." },
+            { q: "We ___ excited about the trip.", options: ["A) is", "B) are", "C) am", "D) be"], correct: 1, tip: "Tip: Use 'are' with the plural subject pronoun 'We'." },
+            { q: "You ___ right.", options: ["A) am", "B) is", "C) are", "D) be"], correct: 2, tip: "Tip: Use 'are' with the pronoun 'You'." },
+            { q: "They ___ brothers.", options: ["A) are", "B) is", "C) am", "D) be"], correct: 0, tip: "Tip: Use 'are' with the plural subject pronoun 'They'." },
+            { q: "We ___ brothers.", options: ["A) is", "B) am", "C) are", "D) be"], correct: 2, tip: "Tip: Use 'are' with the plural subject pronoun 'We'." },
+            { q: "You ___ my only hope.", options: ["A) am", "B) are", "C) is", "D) be"], correct: 1, tip: "Tip: Use 'are' with the pronoun 'You'." },
+            { q: "They ___ expensive shoes.", options: ["A) is", "B) am", "C) are", "D) be"], correct: 2, tip: "Tip: Use 'are' with the plural subject pronoun 'They'." },
+            { q: "We ___ in the same class.", options: ["A) are", "B) is", "C) am", "D) be"], correct: 0, tip: "Tip: Use 'are' with the plural subject pronoun 'We'." },
+            { q: "You ___ a very fast runner.", options: ["A) is", "B) am", "C) be", "D) are"], correct: 3, tip: "Tip: Use 'are' with the pronoun 'You'." },
+            { q: "They ___ lost in the city.", options: ["A) am", "B) is", "C) are", "D) be"], correct: 2, tip: "Tip: Use 'are' with the plural subject pronoun 'They'." },
+            { q: "We ___ tired after the game.", options: ["A) are", "B) is", "C) am", "D) be"], correct: 0, tip: "Tip: Use 'are' with the plural subject pronoun 'We'." },
+            { q: "You ___ a good singer.", options: ["A) is", "B) are", "C) am", "D) be"], correct: 1, tip: "Tip: Use 'are' with the pronoun 'You'." },
+            { q: "They ___ outside the building.", options: ["A) am", "B) is", "C) are", "D) be"], correct: 2, tip: "Tip: Use 'are' with the plural subject pronoun 'They'." },
+            { q: "We ___ safe here.", options: ["A) are", "B) is", "C) am", "D) be"], correct: 0, tip: "Tip: Use 'are' with the plural subject pronoun 'We'." },
+            { q: "You ___ not alone.", options: ["A) is", "B) am", "C) are", "D) be"], correct: 2, tip: "Tip: Use 'are' with the pronoun 'You'." },
+            { q: "They ___ angry.", options: ["A) are", "B) is", "C) am", "D) be"], correct: 0, tip: "Tip: Use 'are' with the plural subject pronoun 'They'." },
+
+            // Singular Nouns - is (76-88)
+            { q: "The dog ___ barking loudly.", options: ["A) is", "B) am", "C) are", "D) be"], correct: 0, tip: "Tip: 'The dog' is a singular noun (it), so use 'is'." },
+            { q: "My car ___ blue.", options: ["A) am", "B) are", "C) is", "D) be"], correct: 2, tip: "Tip: 'My car' is singular (it), so use 'is'." },
+            { q: "The book ___ on the table.", options: ["A) is", "B) am", "C) are", "D) be"], correct: 0, tip: "Tip: 'The book' is singular (it), so use 'is'." },
+            { q: "John ___ a police officer.", options: ["A) am", "B) is", "C) are", "D) be"], correct: 1, tip: "Tip: 'John' is a singular person (he), so use 'is'." },
+            { q: "Mary ___ reading a novel.", options: ["A) is", "B) am", "C) are", "D) be"], correct: 0, tip: "Tip: 'Mary' is a singular person (she), so use 'is'." },
+            { q: "The weather ___ nice today.", options: ["A) am", "B) are", "C) is", "D) be"], correct: 2, tip: "Tip: 'The weather' is singular uncountable (it), so use 'is'." },
+            { q: "My mother ___ cooking dinner.", options: ["A) are", "B) is", "C) am", "D) be"], correct: 1, tip: "Tip: 'My mother' is singular (she), so use 'is'." },
+            { q: "That phone ___ expensive.", options: ["A) is", "B) am", "C) are", "D) be"], correct: 0, tip: "Tip: 'That phone' is singular (it), so use 'is'." },
+            { q: "The test ___ very hard.", options: ["A) am", "B) are", "C) be", "D) is"], correct: 3, tip: "Tip: 'The test' is singular (it), so use 'is'." },
+            { q: "My computer ___ broken.", options: ["A) is", "B) am", "C) are", "D) be"], correct: 0, tip: "Tip: 'My computer' is singular (it), so use 'is'." },
+            { q: "The apple ___ red.", options: ["A) am", "B) is", "C) are", "D) be"], correct: 1, tip: "Tip: 'The apple' is singular (it), so use 'is'." },
+            { q: "This chair ___ uncomfortable.", options: ["A) is", "B) am", "C) are", "D) be"], correct: 0, tip: "Tip: 'This chair' is singular (it), so use 'is'." },
+            { q: "London ___ a big city.", options: ["A) am", "B) are", "C) is", "D) be"], correct: 2, tip: "Tip: 'London' is a singular place (it), so use 'is'." },
+
+            // Plural Nouns - are (89-100)
+            { q: "The dogs ___ playing in the park.", options: ["A) is", "B) am", "C) are", "D) be"], correct: 2, tip: "Tip: 'The dogs' is a plural noun (they), so use 'are'." },
+            { q: "My friends ___ coming over later.", options: ["A) are", "B) is", "C) am", "D) be"], correct: 0, tip: "Tip: 'My friends' is plural (they), so use 'are'." },
+            { q: "The books ___ on the shelf.", options: ["A) is", "B) am", "C) are", "D) be"], correct: 2, tip: "Tip: 'The books' is plural (they), so use 'are'." },
+            { q: "John and Mary ___ at the cinema.", options: ["A) are", "B) is", "C) am", "D) be"], correct: 0, tip: "Tip: 'John and Mary' refers to two people (they), so use 'are'." },
+            { q: "The kids ___ asleep.", options: ["A) is", "B) am", "C) are", "D) be"], correct: 2, tip: "Tip: 'The kids' is plural (they), so use 'are'." },
+            { q: "Those apples ___ delicious.", options: ["A) are", "B) is", "C) am", "D) be"], correct: 0, tip: "Tip: 'Those apples' is plural (they), so use 'are'." },
+            { q: "My shoes ___ dirty.", options: ["A) is", "B) am", "C) are", "D) be"], correct: 2, tip: "Tip: 'My shoes' is plural (they), so use 'are'." },
+            { q: "The teachers ___ in a meeting.", options: ["A) are", "B) is", "C) am", "D) be"], correct: 0, tip: "Tip: 'The teachers' is plural (they), so use 'are'." },
+            { q: "Lions ___ dangerous animals.", options: ["A) is", "B) am", "C) are", "D) be"], correct: 2, tip: "Tip: 'Lions' is a plural noun (they), so use 'are'." },
+            { q: "My keys ___ on the table.", options: ["A) are", "B) is", "C) am", "D) be"], correct: 0, tip: "Tip: 'My keys' is plural (they), so use 'are'." },
+            { q: "The stars ___ bright tonight.", options: ["A) is", "B) am", "C) are", "D) be"], correct: 2, tip: "Tip: 'The stars' is plural (they), so use 'are'." },
+            { q: "His eyes ___ blue.", options: ["A) are", "B) is", "C) am", "D) be"], correct: 0, tip: "Tip: 'His eyes' is plural (they), so use 'are'." }
+        ];
+
+        let score = 0;
+        let currentQuestionObj = null;
+        let isAnswered = false;
+
+        // Elements
+        const questionTextEl = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const feedbackArea = document.getElementById('feedback-area');
+        const feedbackTitle = document.getElementById('feedback-title');
+        const feedbackTip = document.getElementById('feedback-tip');
+        const feedbackIcon = document.getElementById('feedback-icon');
+        const scoreTracker = document.getElementById('score-tracker');
+        const repoModal = document.getElementById('repository-modal');
+        const repoList = document.getElementById('repository-list');
+
+        function loadRandomQuestion() {
+            isAnswered = false;
+            feedbackArea.classList.add('hidden');
+            optionsContainer.innerHTML = '';
+
+            // Pick a random question
+            const randomIndex = Math.floor(Math.random() * questionsRepo.length);
+            currentQuestionObj = questionsRepo[randomIndex];
+
+            // Set question text
+            questionTextEl.innerText = currentQuestionObj.q;
+
+            // Generate options
+            currentQuestionObj.options.forEach((optText, index) => {
+                const btn = document.createElement('button');
+                btn.className = "text-left text-lg font-bold text-slate-700 bg-white border-2 border-slate-200 rounded-xl p-4 hover:border-blue-500 hover:bg-blue-50 transition-all duration-200";
+                btn.innerText = optText;
+                btn.onclick = () => selectOption(index, btn);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function selectOption(selectedIndex, buttonElement) {
+            if (isAnswered) return;
+            isAnswered = true;
+
+            const isCorrect = selectedIndex === currentQuestionObj.correct;
+            const allButtons = optionsContainer.children;
+
+            // Disable all buttons and style them
+            for (let i = 0; i < allButtons.length; i++) {
+                allButtons[i].disabled = true;
+                allButtons[i].classList.remove('hover:border-blue-500', 'hover:bg-blue-50');
+                
+                if (i === currentQuestionObj.correct) {
+                    // Correct answer style
+                    allButtons[i].classList.add('border-emerald-500', 'bg-emerald-50', 'text-emerald-700');
+                } else if (i === selectedIndex && !isCorrect) {
+                    // Wrong selected answer style
+                    allButtons[i].classList.add('border-rose-400', 'bg-rose-50', 'text-rose-700');
+                } else {
+                    // Other unselected options fade out
+                    allButtons[i].classList.add('opacity-50');
+                }
+            }
+
+            // Update Feedback Area
+            feedbackArea.classList.remove('hidden');
+            
+            if (isCorrect) {
+                score++;
+                scoreTracker.innerText = `Score: ${score}`;
+                feedbackIcon.innerText = "✅";
+                feedbackTitle.innerText = "Correct!";
+                feedbackTitle.className = "text-lg font-bold text-emerald-600 mb-1";
+            } else {
+                feedbackIcon.innerText = "❌";
+                feedbackTitle.innerText = "Wrong!";
+                feedbackTitle.className = "text-lg font-bold text-rose-600 mb-1";
+            }
+            
+            feedbackTip.innerText = currentQuestionObj.tip;
+        }
+
+        function toggleRepository() {
+            if (repoModal.classList.contains('hidden')) {
+                // Populate if empty
+                if (repoList.innerHTML === '') {
+                    questionsRepo.forEach((item, index) => {
+                        const correctLetter = item.options[item.correct].substring(0, 2); // gets "A)"
+                        const correctWord = item.options[item.correct].substring(3); // gets "is/am/are"
+                        
+                        const div = document.createElement('div');
+                        div.className = "p-3 bg-blue-50 rounded-lg border border-blue-100 text-sm";
+                        div.innerHTML = `
+                            <p class="font-bold text-slate-800 mb-1">${index + 1}. ${item.q}</p>
+                            <p class="text-emerald-600 font-semibold mb-1">Answer: ${correctLetter} ${correctWord}</p>
+                            <p class="text-slate-500 text-xs italic">${item.tip}</p>
+                        `;
+                        repoList.appendChild(div);
+                    });
+                }
+                repoModal.classList.remove('hidden');
+            } else {
+                repoModal.classList.add('hidden');
+            }
+        }
+
+        // Start first question on load
+        window.onload = loadRandomQuestion;
+
+    </script>
+</body>
+</html>
